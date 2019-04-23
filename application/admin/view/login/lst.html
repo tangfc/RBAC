@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title></title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+
+    {// sweetalert }
+    <link href="__STATIC__/sweetalert/sweetalert.css?v=2.0" rel="stylesheet">
+    {// validateForm样式 }
+    <link href="__STATIC__/css/style.css?v=4.0.0" rel="stylesheet">
+    {// login页面样式 }
+    <link type="text/css" href="__STATIC__/css/login.css?v=4.0.0" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="content">
+        <div class="logo_box">
+            <h3>{$systemSetting['siteName']}</h3>
+            <form id="loginForm" action="{:url('login')}">
+                <!--<input type="hidden" name="__token__" value="{$Request.token}"/>-->
+
+                <div class="input_outer">
+                    <span class="u_user"></span>
+                    <input name="username" class="text" style="color: #FFFFFF !important" type="text" placeholder="请输入用户名" value="" datatype="*2-18" nullmsg="请输入用户名!！" errormsg="用户名至少2个字符,最多18个字符！">
+                </div>
+
+                <div class="input_outer">
+                    <span class="us_uer"></span>
+                    <input name="password" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;" value="" type="password" placeholder="请输入密码" datatype="*" nullmsg="请输入密码！">
+                </div>
+
+                <div class="mb2"><a class="act-but submit" href="javascript:;" style="color: #FFFFFF" id="btn-submit">登录</a></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="__STATIC__/js/jquery-3.3.1.js?v=4.0.0"></script>
+{// validform表单验证JS }
+<script src="__STATIC__/js/plugins/validform/Validform_min.js"></script>
+<script src="__STATIC__/js/plugins/validform/Validform_Datatype.js"></script>
+{// layer-js }
+<script src="__STATIC__/js/plugins/layer/layer.min.js"></script>
+{// sweetalert }
+<script src="__STATIC__/sweetalert/sweetalert.min.js"></script>
+{// login页面 }
+<script src="__STATIC__/js/login.js"></script>
+
+<script>
+    $(function () {
+
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#btn-submit').submit();
+            }
+        }
+
+        var form = $('#loginForm').Validform({
+            btnSubmit: '#btn-submit',
+            postonce: true,
+            showAllError: false,
+            ignoreHidden: true,
+            showAllError: false,
+            //msg：提示信息;
+            //o:{obj:*,type:*,curform:*}, obj指向的是当前验证的表单元素（或表单对象），type指示提示的状态，值为1、2、3、4， 1：正在检测/提交数据，2：通过验证，3：验证失败，4：提示ignore状态, curform为当前form对象;
+            //cssctl:内置的提示信息样式控制函数，该函数需传入两个参数：显示提示信息的对象 和 当前提示的状态（既形参o中的type）;
+            tiptype: function (msg, o) {
+                if (!o.obj.is('form')) {
+                    var B = o.obj.parents('.form-group');
+                    var T = B.find('.help-block');
+                    if (o.type == 2) {
+                        B.removeClass('has-error').addClass('has-success');
+                    } else {
+                        B.removeClass('has-success').addClass('has-error');
+                        layer.tips(msg, o.obj, {
+                            tips: [2, '#66AFE9']
+                        });
+                    }
+                }
+            },
+            ajaxPost: true,
+            callback: function (data) {
+                if (data.status == 1) {
+                    location.href = "{:url('admin/index/index')}";
+                } else {
+                    swal('登录失败', data.info, 'error');
+                    $('#password').val('');
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
+

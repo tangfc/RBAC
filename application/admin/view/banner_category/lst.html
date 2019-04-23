@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox-title">
+        <h3>
+            banner管理
+            <button class="btn btn-xs btn-outline pull-right " data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><span>点击筛选</span> <i class="fa fa-angle-down"></i></button>
+        </h3>
+    </div>
+    <div class="ibox-content">
+
+        <div class="panel-group" id="accordion" style="margin-top: 15px;margin-bottom: -5px;">
+            <div id="collapseTwo" class="panel-collapse collapse">
+                <div class="form-inline text-center">
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">分类名称：</span>
+                            <input type="text" class="form-control text-center" name="categoryName" id="categoryName" value="" placeholder="请输入分类名称">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">开始时间：</span>
+                            <input type="text" class="form-control text-center" name="stime" id="stime" value=""
+                                   placeholder="选择开始时间">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">结束时间：</span>
+                            <input type="text" class="form-control text-center" name="etime" id="etime" value=""
+                                   placeholder="选择结束时间">
+                        </div>
+                        <a href="javascript:;" id="search" class="btn btn-primary ">搜索</a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row row-lg">
+            <div class="col-sm-12">
+                <div id="toolbar" class="btn-group">
+                    {if check_authority( $Think.session.adminId ,'admin/bannerCategory/add') }
+                        <button type="button" id="add" class="btn btn-sm btn-primary authorize-edit">
+                            <i class="glyphicon glyphicon-plus"></i> 新增
+                        </button>
+                    {/if}
+                </div>
+
+                <table id="table" data-search="true">
+                    <thead>
+                    <tr>
+                        <th data-field="id" data-halign="center" data-sortable="true" data-align="center">ID</th>
+                        <th data-field="categoryName" data-halign="center" data-align="center">分类名称</th>
+                        <th data-field="type" data-halign="center" data-align="center">类别</th>
+                        <th data-field="orderNo" data-halign="center" data-align="center" data-sortable="true" data-width="140" >排序值</th>
+                        <th data-field="remark" data-halign="center" data-align="center" data-width="280">备注</th>
+                        <th data-field="createTime" data-halign="center" data-sortable="true" data-align="center" data-width="200" t>创建时间</th>
+                        <th data-field="do" data-halign="center" data-align="center" data-width="200">操作</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{include file="public/js" /}
+<script>
+    $(function () {
+
+        <!-- table初始化 -->
+        initBootstrapTable(id = 'table', url = 'lst');
+
+        // 时间筛选
+        searchByTime('stime', 'etime', true);
+
+        <!-- 新增页面 -->
+        $('#add').click(function () {
+            layuiOpen(title = '分类新增', area = ['500px', '400px'], content = "{:url('add')}", btn = [], type = 2, closeBtn = 2, btnAlign = 'r',anim = 2,skin = 'layui-layer-demo');
+        });
+
+        <!-- 编辑页面 -->
+        $('#table').on('click', '.edit', function (event) {
+            event.preventDefault();
+            var id = $(this).data().id;
+            var url = "{:url('edit')}" + "?id=" + id;
+            layuiOpen(title = '分类新增', area = ['500px', '400px'], content = url, btn = [], type = 2, closeBtn = 2, btnAlign = 'r',anim = 2,skin = 'layui-layer-demo');
+        })
+        .on('click','.delete',function () {
+            event.preventDefault();
+            var id = $(this).data().id;
+            var url = "{:url('delete')}";
+            checkAndDelete("{:url('bannerCategory/isHaveBannerCountByBannerCategoryId')}",{id:id},"您确定要删除吗","该分类下存在banner,确定后这些banner也会删除",url,{id:id});
+        });
+    });
+
+    function queryParams(params = {}) {
+        //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+        var temp = {
+            limit: params.limit,     // 页面大小
+            offset: params.offset,  // 每页显示数据的开始行号
+            sort: params.sort,       // 排序列名
+            order: params.order,    // 排位命令（desc，asc
+            categoryName: $('#categoryName').val(),    // 排位命令（desc，asc
+            stime: $('#stime').val(),
+            etime: $('#etime').val()
+        };
+        return temp;
+    };
+</script>
+</body>
+</html>
+
+

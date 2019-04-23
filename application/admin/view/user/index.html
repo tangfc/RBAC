@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+        {$Think.const.APP_PATH} <br />
+        {$Think.server.php_self} <br />
+        {$Think.server.get.name} <br />
+        {$Think.config.database.hostname} <br />
+        {$Request.path} <br />
+        {$Request.ip} <br />
+        {$data| raw}
+</div>
+</body>
+</html>

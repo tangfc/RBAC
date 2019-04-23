@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h3>系统设置</h3>
+        </div>
+        <div class="ibox-content">
+            <div class="row row-lg">
+
+                <div class="col-sm-12">
+
+                    <!-- 选项卡菜单-->
+                    <ul id="myTab" class="nav nav-tabs" role="tablist" >
+                        <li class="active" ><a href="#base-setting" data-toggle="tab">基本设置</a></li>
+                        <li><a href="#security-setting" role="tab" data-toggle="tab">安全设置</a></li>
+                    </ul>
+
+                    <!-- 选项卡面板 -->
+                    <form class="form-horizontal" id="editForm" action="{:url('lst')}" style="margin-top: 20px;">
+                        <input type="hidden" name="id" value="{$data['id']}">
+                        <div id="myTabContent" class="tab-content">
+                            <!-- 基本设置 -->
+                            <div class="tab-pane fade in active" id="base-setting">
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">网站名称：</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" name="siteName" placeholder="网站名称为2-50个字符" class="form-control" value="{$data['siteName']}" autocomplete="off" dataType="*2-50" nullmsg="请输入网站名称" errormsg="网站名称为2-50个字符">
+                                    </div>
+                                    <label class="help-inline m-b-none" style="margin-top:8px;"></label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">网站标题：</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" name="title" placeholder="标题为2-50个字符" class="form-control" value="{$data['title']}" autocomplete="off" dataType="*2-50" nullmsg="请输入网站标题" errormsg="网站标题为2-50个字符">
+                                    </div>
+                                    <label class="help-inline m-b-none" style="margin-top:8px;"></label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">关键词：</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" name="keywords" placeholder="关键词为2-100个字符,用逗号隔开" class="form-control" value="{$data['keywords']}" autocomplete="off" dataType="*2-100" nullmsg="请输入关键词" errormsg="关键词为2-100个字符">
+                                    </div>
+                                    <label class="help-inline m-b-none" style="margin-top:8px;"></label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">描述：</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" name="description" placeholder="描述为2-250个字符" class="form-control" value="{$data['description']}" autocomplete="off" dataType="*2-250" nullmsg="请输入描述" errormsg="描述为2-250个字符">
+                                    </div>
+                                    <label class="help-inline m-b-none" style="margin-top:8px;"></label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">底部版权信息：</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" name="copyright" placeholder="© 2019 tfc.babytime.vip" class="form-control" value="{$data['copyright']}" autocomplete="off" dataType="*2-50" nullmsg="请输入底部版权信息" errormsg="底部版权信息2-50个字符">
+                                    </div>
+                                    <label class="help-inline m-b-none" style="margin-top:8px;"></label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">备案号：</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" name="recordNo" placeholder="京ICP备00000000号" class="form-control" value="{$data['recordNo']}" autocomplete="off" dataType="*" maxlength="100" nullmsg="请输入备案号" >
+                                    </div>
+                                    <label class="help-inline m-b-none" style="margin-top:8px;"></label>
+                                </div>
+
+                            </div>
+
+                            <!-- 安全设置 -->
+                            <div class="tab-pane fade " id="security-setting">
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">允许访问后台的IP列表：</label>
+                                    <div class="col-sm-6">
+                                        <textarea name="allowIps" placeholder="IP地址用英文状态逗号隔开" class="form-control" style="height:100px" autocomplete="off" dataType="*" nullmsg="请输入允许访问后台的IP">{$data['allowIps']}</textarea>
+                                    </div>
+                                    <label class="help-inline m-b-none" style="margin-top:8px;"></label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">后台登录失败最大次数：</label>
+                                    <div class="col-sm-6">
+                                        <input type="number" name="allowLoginFailNo" placeholder="登录失败最大次数至少1次,最多10次" class="form-control" value="{$data['allowLoginFailNo'] ? $data['allowLoginFailNo'] : 1;}" min="1" max="10"  autocomplete="off" dataType="n" nullmsg="请输入后台登录失败最大次数" errormsg="登录失败最大次数至少1次,最多10次">
+                                    </div>
+                                    <label class="help-inline m-b-none" ></label>
+                                </div>
+
+                            </div>
+
+                            <div class="layui-form-item text-center">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <button class="btn btn-primary" type="submit" id="btn-submit">保存</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </form>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/js" /}
+
+<!--validform-->
+<script src="__STATIC__/js/plugins/validform/Validform_min.js"></script>
+<script src="__STATIC__/js/plugins/validform/Validform_Datatype.js"></script>
+
+<script>
+    $(function () {
+
+        // iCheck初始化
+        initIcheck();
+
+        // 提交表单
+        subnitForm('editForm', true, 'help-inline');
+    })
+</script>
+</body>
+</html>

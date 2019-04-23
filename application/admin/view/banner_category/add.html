@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- layui -->
+    <link href="__STATIC__/layui-v2.4.3/css/layui.css?v=2.40" rel="stylesheet">
+
+    {include file="public/css" /}
+
+</head>
+<body>
+
+<form class="layui-form" lay-filter="layuiadmin-form-admin" id="layuiFrom" action="{:url('add')}"
+      style="padding: 20px 30px 0 0;">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">分类名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="categoryName" placeholder="请输入分类名称" class="form-control" value="" dataType="*2-18" nullmsg="请输入分类名称" autocomplete="off" errormsg="分类名称为2-18个字符">
+        </div>
+        <label class="help-inline m-b-none"></label>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">类别</label>
+        <div class="layui-input-inline" style="margin-top: 8px;">
+            <label class="radio-inline i-checks"><input type="radio" name="type" datatype="*"  value="1" checked="checked" >系统</label>
+            <label class="radio-inline i-checks"><input type="radio" name="type" datatype="*"  value="2"  >自添</label>
+            <br /><em class="text-warning"><i class="fa fa-info-circle"></i> 系统不可删除,自添可删除</em>
+        </div>
+        <label class="help-inline m-b-none" ></label>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序值</label>
+        <div class="layui-input-inline">
+            <input type="number" name="orderNo" placeholder="请输入排序值" class="form-control" value="1000" min="0" max="9999" maxlength="4" autocomplete="off" dataType="n" nullmsg="请输入排序值" errormsg="请输入合法的排序值">
+            <em class="text-warning"><i class="fa fa-info-circle"></i> 范围0-9999，值越大越排前</em>
+        </div>
+        <label class="help-inline m-b-none" ></label>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-inline">
+            <textarea type="text" name="remark" autocomplete="off" class="form-control" rows="4"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item text-right">
+        <div class="col-sm-4 col-sm-offset-2">
+            <button class="btn btn-primary" type="submit" id="btn-submit">保存</button>
+            <button class="btn  closelayer" type="button">取消</button>
+        </div>
+    </div>
+
+</form>
+
+{include file="public/js" /}
+
+<!--validform-->
+<script src="__STATIC__/js/plugins/validform/Validform_min.js"></script>
+<script src="__STATIC__/js/plugins/validform/Validform_Datatype.js"></script>
+
+<script>
+    $(function () {
+        // iCheck初始化
+        initIcheck();
+
+        // 弹出层表单提交函数
+        layuiFrom();
+    });
+</script>
+</body>
+</html>
+
+

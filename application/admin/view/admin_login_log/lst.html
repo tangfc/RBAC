@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox-title">
+        <h3>
+            日志列表
+            <button class="btn btn-xs btn-outline pull-right " data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><span>点击筛选</span> <i class="fa fa-angle-down"></i></button>
+        </h3>
+    </div>
+    <div class="ibox-content">
+
+        <div class="panel-group" id="accordion" style="margin-top: 15px;margin-bottom: -5px;">
+            <div id="collapseTwo" class="panel-collapse collapse">
+                <div class="form-inline text-center">
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">用户名称：</span>
+                            <input type="text" class="form-control text-center" name="username" id="username" value=""
+                                   placeholder="请输入用户名称">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">开始时间：</span>
+                            <input type="text" class="form-control text-center" name="stime" id="stime" value=""
+                                   placeholder="选择开始时间">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">结束时间：</span>
+                            <input type="text" class="form-control text-center" name="etime" id="etime" value=""
+                                   placeholder="选择结束时间">
+                        </div>
+                        <a href="javascript:;" id="search" class="btn btn-primary ">搜索</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-lg">
+            <div class="col-sm-12">
+                <table id="table" data-search="true">
+                    <thead>
+                    <tr>
+                        <th data-field="id" data-halign="center" data-align="center" data-sortable="true"
+                            data-width="100">ID
+                        </th>
+                        <th data-field="username" data-halign="center" data-align="center">用户名称</th>
+                        <th data-field="ip" data-halign="center" data-align="center">IP</th>
+                        <th data-field="operator" data-halign="center" data-align="center">运营商</th>
+                        <th data-field="country" data-halign="center" data-align="center">国家</th>
+                        <th data-field="province" data-halign="center" data-align="center">省</th>
+                        <th data-field="city" data-halign="center" data-align="center">市</th>
+                        <th data-field="county" data-halign="center" data-align="center">区/县</th>
+                        <th data-field="area" data-halign="center" data-align="center">详细地址</th>
+                        <th data-field="createTime" data-halign="center" data-align="center" data-sortable="true">登录时间</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{include file="public/js" /}
+<script>
+    $(function () {
+        <!-- table 初始化 -->
+        initBootstrapTable(id='table',url='lst');
+
+        // 时间筛选
+        $('#stime, #etime').datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd hh:ii',
+            weekStart: 1, //一周从哪一天开始。0（星期日）到6（星期六）
+            startView: 2, // 日期时间选择器打开之后首先显示的视图  默认值：2, 'month'
+            minView: 0, // 日期时间选择器所能够提供的最精确的时间选择视图  默认值：0, 'hour'
+            todayHighlight: true,
+            todayBtn: true,
+            autoclose: true
+        });
+        $('#stime').on('changeDate', function (event) {
+            $('#etime').datetimepicker('setStartDate', event.date);
+        });
+        $('#etime').on('changeDate', function (event) {
+            $('#stime').datetimepicker('setEndDate', event.date);
+        });
+
+    });
+</script>
+</body>
+</html>
+
+

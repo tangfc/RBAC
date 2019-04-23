@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+
+</head>
+<body class="gray-bg">
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h3>
+                <button type="button" class="btn btn-white btn-sm closelayer">返回</button>
+                菜单权限新增
+            </h3>
+        </div>
+        <div class="ibox-content">
+            <div class="row row-lg">
+                <div class="col-sm-12">
+                    <form class="form-horizontal" id="editForm" action="{:url('add')}" method="post" style="margin-top: 20px" >
+                        <input type="hidden" name="parentId" value="{$parentId ? $parentId : 0}" >
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">菜单名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="privilegeName" id="privilegeName" placeholder="请输入菜单名称" class="form-control" value=""  autocomplete="off" dataType="*2-18" nullmsg="请输入菜单名称" errormsg="菜单名称为2-18字符">
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Model名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="model" id="model" placeholder="请输入Model名称" class="form-control" value=""  autocomplete="off" dataType="*" nullmsg="请输入Model名称">
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Controller名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="controller" id="controller" placeholder="请输入Controller名称" class="form-control" value=""  autocomplete="off" dataType="*" nullmsg="请输入Controller名称">
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Action名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="action" id="action" placeholder="请输入Action名称" class="form-control" value=""  autocomplete="off" dataType="*" nullmsg="请输入Action名称">
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">参数</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="parameter" id="parameter" placeholder="请输入参数" class="form-control" value=""  autocomplete="off" dataType="*" nullmsg="请输入参数" ignore="ignore">
+                                <i class="text-warning"><i class="fa fa-info-circle"></i> 参数为空，表示不做限制</i>
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">类型</label>
+                            <div class="col-sm-4">
+                                {foreach $privilegeType as $key=>$vo }
+                                <label class="radio-inline i-checks"><input type="radio" name="type" datatype="*"  value="{$key}" {if $key == 2 }checked{/if}>{$vo}</label>
+                                {/foreach}
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">排序值</label>
+                            <div class="col-sm-4">
+                                <input type="number" name="orderNo" id="orderNo" placeholder="请输入排序值" class="form-control" value="1000" min="1" max="9999"  autocomplete="off" dataType="/^\+?[1-9]\d{0,3}(\.\d*)?$/" nullmsg="请输入排序值" errormsg="排序值必须大于0且小于9999的正整数">
+                                <em class="text-warning"><i class="fa fa-info-circle"></i> 默认值为1000，最大值为9999，最小值0，数值越大越排前</em>
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-4">
+                                <textarea id="remark" name="remark" placeholder="请输入备注" class="form-control" style="height:150px"  nullmsg="请输入备注" ></textarea>
+                                <span class="help-block m-b-none"></span>
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-primary" type="submit" id="btn-submit">保 存</button>
+                                <button class="btn btn-black closelayer" type="button">取 消</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{include file="public/js" /}
+<!-- validform -->
+<script src="__STATIC__/validform/Validform_v5.3.2.js"></script>
+
+<script type="text/javascript">
+    $(function() {
+        // iCheck初始化
+        initIcheck();
+
+        // 提交表单
+        subnitForm('editForm', false, 'help-inline');
+    });
+</script>
+</body>
+</html>

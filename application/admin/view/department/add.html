@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+    <!--webuploader-->
+    <link rel="stylesheet" type="text/css" href="__STATIC__/webuploader-0.1.5/webuploader.css">
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h3>
+                <button type="button" class="btn btn-white btn-sm closelayer">返回</button>
+                新增部门
+            </h3>
+        </div>
+        <div class="ibox-content">
+            <div class="row row-lg">
+                <div class="col-sm-12">
+                    <form class="form-horizontal" id="editForm" action="{:url('add')}" style="margin-top: 20px;">
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">图标</label>
+                            <div class="col-sm-4">
+                                <!--dom结构部分-->
+                                <div id="uploader-demo">
+                                    <!--用来存放item-->
+                                    <div id="fileList" class="uploader-list"></div>
+                                    <div id="filePicker" style="">
+                                        <img src="/uploads/department/default.jpg" width="200" height="200">
+                                    </div>
+                                </div>
+                                <input type="hidden" name="icon" id="fileHidden" class="form-control" value="" dataType="*" nullmsg="请上传部门图标" errormsg="请上传部门图标">
+                            </div>
+                            <span class="help-inline m-b-none"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="departmentName" id="departmentName" placeholder="请输入名称" class="form-control" value="" dataType="*1-18" nullmsg="请输入部门名称" errormsg="部门名称为2-18个字符">
+                            </div>
+                            <label class="help-inline m-b-none" style="margin-top:8px;"></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">排序值</label>
+                            <div class="col-sm-4">
+                                <input type="number" name="orderNo" id="orderNo" placeholder="请输入排序值" class="form-control" value="1000" min="0" max="9999" dataType="n" nullmsg="请输入排序值" errormsg="排序值只能为大于等于0且小于9999的正整数">
+                                <em class="text-warning"><i class="fa fa-info-circle"></i> 默认值为1000，最大值为9999，最小值0，数值越大越排前</em>
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-4">
+                                <textarea id="remark" name="remark" placeholder="请输入备注" class="form-control" style="height:150px" nullmsg="请输入备注"></textarea>
+                                <span class="help-inline m-b-none"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-primary" type="submit" id="btn-submit">保存</button>
+                                <button class="btn btn-black closelayer" type="button">取消</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/js" /}
+<!--webuploader-->
+<script type="text/javascript" src="__STATIC__/webuploader-0.1.5/webuploader.js"></script>
+<!--validform-->
+<script src="__STATIC__/js/plugins/validform/Validform_min.js"></script>
+<script src="__STATIC__/js/plugins/validform/Validform_Datatype.js"></script>
+
+<script>
+    $(function () {
+        var server = "{:url('upload')}" + "?width=120&height=120";
+        // 上传图片
+        uploaderInit(server);
+
+        // 提交表单
+        subnitForm('editForm', false, 'help-inline');
+    })
+</script>
+</body>
+</html>

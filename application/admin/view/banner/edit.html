@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+    <!--webuploader-->
+    <link rel="stylesheet" type="text/css" href="__STATIC__/webuploader-0.1.5/webuploader.css">
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h3>
+                <button type="button" class="btn btn-white btn-sm closelayer">返回</button>
+                Banner编辑
+            </h3>
+        </div>
+        <div class="ibox-content">
+            <div class="row row-lg">
+                <div class="col-sm-12">
+                    <form class="form-horizontal" id="editForm" action="{:url('edit')}" style="margin-top: 20px;">
+                        <input type="hidden" name="id" value="{$id}" />
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">标题</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="title" placeholder="请输入标题" class="form-control" value="{$data['title']}" autocomplete="off" dataType="*2-18" nullmsg="请输入标题" errormsg="标题为2-18个字符">
+                            </div>
+                            <label class="help-inline m-b-none"></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Banner分类</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" id="bannerCategoryId" name="bannerCategoryId" dataType="*" nullmsg="请选择Banner分类">
+                                    <option value="">请选择Banner分类</option>
+                                    {foreach $bannerCategory as $key => $value }
+                                    <option value="{$value['id']}" {eq name="$data['bannerCategoryId']" value="$value['id']"}selected{/eq} >{$value['categoryName']}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                            <label class="help-inline m-b-none"></label>
+                        </div>
+
+                        <div class="form-group banner-type">
+                            <label class="col-sm-2 control-label">类型</label>
+                            <div class="col-sm-4">
+                                {foreach $bannerType as $key => $value}
+                                    <label class="radio-inline i-checks"><input type="radio" datatype="*" name="type" value="{$key}" {eq name="$data['type']" value="$key"}checked{/eq}>{$value}</label>
+                                {/foreach}
+                            </div>
+                            <label class="help-inline m-b-none"></label>
+                        </div>
+
+                        <div class="form-group banner-type banner-type-one">
+                            <label class="col-sm-2 control-label">Banner【PC】</label>
+                            <div class="col-sm-4">
+                                <div id="filePicker">
+                                    <img src="{if $data['type'] == 1}{$data['image']['pc']}{else /}/uploads/department/default.jpg{/if}"  style="max-height: 200px;">
+                                </div>
+                                <input type="hidden" name="pc" id="fileHidden" class="form-control" value="{if $data['type'] == 1}{$data['pc']}{/if}" dataType="*" nullmsg="请上传Banner【PC】图片" errormsg="请上传Banner【PC】图片">
+                            </div>
+                            <label class="help-inline m-b-none"></label>
+                        </div>
+
+                        <div class="form-group banner-type banner-type-one">
+                            <label class="col-sm-2 control-label">Banner【Mobile】</label>
+                            <div class="col-sm-4">
+                                <div id="filePicker2">
+                                    <img src="{if $data['type'] == 1}{$data['image']['mobile']}{else /}/uploads/department/default.jpg{/if}"  style="max-height: 200px;">
+                                </div>
+                                <input type="hidden" name="mobile" id="fileHidden2" class="form-control" value="{if $data['type'] == 1}{$data['mobile']}{/if}" nullmsg="请上传Banner【Mobile】图片" errormsg="请上传Banner【Mobile】图片">
+                            </div>
+                            <label class="help-inline m-b-none"></label>
+                        </div>
+
+                        <div class="form-group banner-type-two" style="display: none;">
+                            <label class="col-sm-2 control-label">资源地址【PC】</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="resourcePc" placeholder="请输入资源地址【PC】" class="form-control" value="{if $data['type'] == 2}{$data['image']['pc']}{/if}" autocomplete="off"  nullmsg="请输入资源地址【PC】" errormsg="请输入正确的资源地址【PC】">
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group banner-type-two" style="display: none;">
+                            <label class="col-sm-2 control-label">资源地址【Mobile】</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="resourceMobile" placeholder="请输入资源地址【Mobile】" class="form-control" value="{if $data['type'] == 2}{$data['image']['mobile']}{/if}" autocomplete="off" nullmsg="请输入资源地址【Mobile】" errormsg="请输入正确的资源地址【Mobile】" ignore="ignore" >
+                            </div>
+                            <label class="help-inline m-b-none"></label>
+                        </div>
+
+                        <div class="form-group banner-type-all">
+                            <label class="col-sm-2 control-label">链接地址</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="url" placeholder="请输入链接" class="form-control" value="{$data['url']}" autocomplete="off" dataType="url" nullmsg="请输入链接" errormsg="请输入正确的链接" ignore="ignore" >
+                            </div>
+                            <label class="help-inline m-b-none" style="margin-top:8px;"></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">排序值</label>
+                            <div class="col-sm-4">
+                                <input type="number" name="orderNo" id="orderNo" placeholder="请输入排序值" class="form-control" value="{$data['orderNo']}" min="0" max="9999" dataType="n" nullmsg="请输入排序值" errormsg="排序值只能为大于等于0且小于9999的正整数">
+                            </div>
+                            <label class="help-inline m-b-none" style="margin-top:8px;">
+                                <em class="text-warning"><i class="fa fa-info-circle"></i> 默认值为1000，最大值为9999，最小值0，数值越大越排前</em>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-4">
+                                <textarea id="remark" name="remark" placeholder="请输入备注" class="form-control" style="height:150px">{$data['remark']}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-primary" type="submit" id="btn-submit">保存</button>
+                                <button class="btn btn-black closelayer" type="button">取消</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/js" /}
+<!--webuploader-->
+<script type="text/javascript" src="__STATIC__/webuploader-0.1.5/webuploader.js"></script>
+<!--validform-->
+<script src="__STATIC__/js/plugins/validform/Validform_min.js"></script>
+<script src="__STATIC__/js/plugins/validform/Validform_Datatype.js"></script>
+
+<script>
+    $(function () {
+        var url = "{:url('upload')}";
+
+        // 初始化
+        init( {$data['type']} );
+
+        // iCheck初始化
+        initIcheck();
+
+        // 切换事件
+        $("input:radio[name='type']").on('ifChecked', function(event){
+                if( $(this).val() == 1 ){
+                    $('.banner-type-two').hide();
+                    $('#resourceUrl').removeAttr("datatype");
+                    $('#fileHidden').attr("datatype",'*');
+                    $('.banner-type-one').show();
+                }else if($(this).val() == 2){
+                    $('.banner-type-one').hide();
+                    $('#resourceUrl').attr("datatype",'url');
+                    $('#fileHidden').removeAttr("datatype");
+                    $('.banner-type-two').show();
+                }
+        });
+
+        // 上传PC图片
+        uploaderInit(url);
+
+        // 上传手机图片
+        uploaderInit2(url,"#filePicker2","#filePicker2","#fileHidden2")
+
+        // 提交表单
+        subnitForm('editForm', false, 'help-inline');
+    });
+
+    function init( type = 1) {
+        if( type == 1 ){
+            $('.banner-type-two').hide();
+            $('#resourceUrl').removeAttr("datatype");
+            $('#fileHidden').attr("datatype",'*');
+            $('.banner-type-one').show();
+        }else if(type == 2){
+            $('.banner-type-one').hide();
+            $('#resourceUrl').attr("datatype",'url');
+            $('#fileHidden').removeAttr("datatype");
+            $('.banner-type-two').show();
+        }
+    }
+
+</script>
+</body>
+</html>

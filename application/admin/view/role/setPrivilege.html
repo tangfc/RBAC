@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+
+</head>
+<body class="gray-bg">
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h3>
+                <button type="button" class="btn btn-white btn-sm closelayer">返回</button>
+                设置权限
+            </h3>
+        </div>
+        <div class="ibox-content">
+            <div class="row row-lg">
+                <div class="col-sm-12">
+                    <div class="col-sm-4">
+                        <h2 class="text-center">操作功能</h2>
+                        <div class="form-group">
+                            <label for="input-check-node" class="sr-only">Search Tree:</label>
+                            <input type="input" class="form-control" id="input-check-node" placeholder="请输入要搜索的权限名称"
+                                   value="">
+                        </div>
+                        <div class="checkbox">
+                            <label class="radio-inline i-checks" style="padding-left: 0px;">
+                                <input type="checkbox" class="checkbox" id="chk-check-silent" value="false">不计入事件
+                            </label>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <button type="button" class="btn btn-success" id="btn-check-all">全部选择</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-info" id="btn-uncheck-all">全部取消</button>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <h2 class="text-center">权限列表</h2>
+                        <div id="treeview-checkable" class=""></div>
+                    </div>
+                    <div class="col-sm-4">
+                        <h2 class="text-center">事件列表</h2>
+                        <div id="checkable-output"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-4">
+                        <button class="btn btn-primary" type="submit" id="btn-submit">保 存</button>
+                        <button class="btn btn-black closelayer" type="button">取 消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{include file="public/js" /}
+<!-- validform -->
+<script src="__STATIC__/validform/Validform_v5.3.2.js"></script>
+<!-- boostrap-treeview -->
+<script src="__STATIC__/bootstrapTreeview/bootstrap-treeview.js"></script>
+
+<script type="text/javascript">
+
+    $(function () {
+
+        // iCheck初始化
+        initIcheck();
+
+        // 请求数据
+        $.post("{:url('admin/privilege/getPrivilegeList')}", {'roleId':{$roleId}}, function (cb) {
+            if (cb['status'] == 1) {
+                initTree(cb['data']);
+            } else {
+                swal('获取数据失败', '', 'error');
+            }
+        }, 'json');
+
+        // 提交数据
+
+
+    });
+
+    // 初始化权限树
+    function initTree(data) {
+        var $checkableTree = $("#treeview-checkable").treeview({
+            data: data, // 数据
+            showTags: true, // 是否显示tags
+            showCheckbox: true,   //是否显示复选框
+            showBorder: true, //是否在节点周围显示边框
+            highlightSelected: true,    //是否高亮选中
+            nodeIcon: 'glyphicon glyphicon-hand-right',    // 节点图标
+            checkedIcon: "glyphicon glyphicon-check", // 节点被选中时显示的图标
+            collapseIcon: "glyphicon glyphicon-minus", // 节点被折叠时显示的图标
+            expandIcon: "glyphicon glyphicon-plus", // 节点展开时显示的图标
+            emptyIcon: "", // 当节点没有子节点的时候显示的图标
+            enableLinks: false, // 是否将节点文本呈现为超链接。前提是在每个节点基础上，必须在数据结构中提供href值
+            multiSelect: true, // 是否可以同时选择多个节点
+            checkboxes: true,
+
+            // onNodeChecked: function(event, node) {
+            //     $('#checkable-output').prepend('<p>' + node.text + ' was checked</p>');
+            // },
+            // onNodeUnchecked: function (event, node) {
+            //     $('#checkable-output').prepend('<p>' + node.text + ' was unchecked</p>');
+            // },
+
+            onNodeChecked: function (event, node) { // 选中节点
+
+                var selectNodes = getChildNodeIdArr(node); // 获取所有子节点
+                if (selectNodes) { // 子节点不为空，则选中所有子节点
+                    $('#treeview-checkable').treeview('checkNode', [selectNodes, {silent: true}]);
+                }
+                var parentNode = $("#treeview-checkable").treeview("getNode", node.parentId);
+                setParentNodeCheck(node);
+            },
+            onNodeUnchecked: function (event, node) { // 取消选中节点
+
+                var selectNodes = getChildNodeIdArr(node); // 获取所有子节点
+                if (selectNodes) { // 子节点不为空，则取消选中所有子节点
+                    $('#treeview-checkable').treeview('uncheckNode', [selectNodes, {silent: true}]);
+                }
+            },
+            onNodeExpanded: function (event, data) { // 点击扩展
+                if (data.nodes === undefined || data.nodes === null) {
+                } else if (data.tags[0] === "2") {
+                    // alert("Tags 2");
+                } else {
+                }
+            },
+        });
+
+        // 点击全选
+        $('#btn-check-all').on('click', function (e) {
+            $checkableTree.treeview('checkAll', {silent: $('#chk-check-silent').is(':checked')});
+        });
+        // 点击全部取消
+        $('#btn-uncheck-all').on('click', function (e) {
+            $checkableTree.treeview('uncheckAll', {silent: $('#chk-check-silent').is(':checked')});
+        });
+
+        // 点击搜索节点
+        var findCheckableNodess = function () {
+            return $checkableTree.treeview('search', [$('#input-check-node').val(), {
+                ignoreCase: false,
+                exactMatch: false
+            }]);
+        };
+        // Check/uncheck/toggle nodes
+        $('#input-check-node').on('keyup', function (e) {
+            checkableNodes = findCheckableNodess();
+            $('.check-node').prop('disabled', !(checkableNodes.length >= 1));
+        });
+
+        // 提交数据
+        $('#btn-submit').click(function () {
+            var seletedNodes = $checkableTree.treeview('getChecked');
+            var nodesArr = [];
+            if (seletedNodes.length == 0) {
+                swal('您还没有选择权限', '', 'error');
+            }
+            $.each(seletedNodes, function (i, item) {
+                nodesArr.push(item['tags'][0]);
+            });
+            $.post("{:url('admin/role/setPrivilegAction')}", {'privilegeIds':nodesArr,'roleId':{$roleId}}, function (cb) {
+                if (cb.status == 1) {
+                    parent.swal('操作成功', '', 'success');
+                    closeLayer();
+                } else {
+                    swal('操作失败', '', 'error');
+                }
+            }, 'json');
+        });
+    }
+
+    // 获取所有子节点
+    function getChildNodeIdArr(node) {
+        var ts = [];
+        if (node.nodes) {
+            for (x in node.nodes) {
+                ts.push(node.nodes[x].nodeId);
+                if (node.nodes[x].nodes) {
+                    var getNodeDieDai = getChildNodeIdArr(node.nodes[x]);
+                    for (j in getNodeDieDai) {
+                        ts.push(getNodeDieDai[j]);
+                    }
+                }
+            }
+        } else {
+            ts.push(node.nodeId);
+        }
+        return ts;
+    }
+
+    // 设置父级节点unchecked
+    function setParentNodeCheck(node) {
+        var parentNode = $("#treeview-checkable").treeview("getNode", node.parentId);
+        if (parentNode.nodes) {
+            var checkedCount = 0;
+            for (x in parentNode.nodes) {
+                if (parentNode.nodes[x].state.checked) {
+                    checkedCount++;
+                } else {
+                    break;
+                }
+            }
+            if (checkedCount === parentNode.nodes.length) {
+                $("#treeview-checkable").treeview("checkNode", parentNode.nodeId);
+                setParentNodeCheck(parentNode);
+            }
+        }
+    }
+</script>
+</body>
+</html>

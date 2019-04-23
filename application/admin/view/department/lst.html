@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+    <style>
+        body .demo-class .layui-layer-title{background:#c00; color:#fff; border: none;}
+        body .demo-class .layui-layer-btn{border-top:1px solid #E9E7E7}
+        body .demo-class .layui-layer-btn a{background:#333;}
+        body .demo-class .layui-layer-btn .layui-layer-btn1{background:#999;}
+    </style>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox-title">
+        <h3>
+            部门管理
+            <button class="btn btn-xs btn-outline pull-right " data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><span>点击筛选</span> <i class="fa fa-angle-down"></i></button>
+        </h3>
+    </div>
+    <div class="ibox-content">
+
+        <div class="panel-group" id="accordion" style="margin-top: 15px;margin-bottom: -5px;">
+            <div id="collapseTwo" class="panel-collapse collapse">
+                <div class="form-inline text-center">
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">部门名称：</span>
+                            <input type="text" class="form-control text-center" name="departmentName" id="departmentName" value="" placeholder="请输入部门名称">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">开始时间：</span>
+                            <input type="text" class="form-control text-center" name="stime" id="stime" value=""
+                                   placeholder="选择开始时间">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">结束时间：</span>
+                            <input type="text" class="form-control text-center" name="etime" id="etime" value=""
+                                   placeholder="选择结束时间">
+                        </div>
+                        <a href="javascript:;" id="search" class="btn btn-primary ">搜索</a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row row-lg">
+            <div class="col-sm-12">
+                <div id="toolbar" class="btn-group">
+                    {if check_authority( $Think.session.adminId ,'admin/department/add') }
+                        <button type="button" id="add" class="btn btn-sm btn-primary authorize-edit">
+                            <i class="glyphicon glyphicon-plus"></i> 新增
+                        </button>
+                    {/if}
+                </div>
+
+                <table id="table" data-search="true">
+                    <thead>
+                    <tr>
+                        <th data-field="icon" data-halign="center" data-align="center" data-width="200">图标</th>
+                        <th data-field="departmentName" data-halign="center" data-align="center">部门名称</th>
+                        <th data-field="orderNo" data-halign="center" data-align="center" data-sortable="true" data-width="120" >排序值</th>
+                        <th data-field="remark" data-halign="center" data-align="center" data-width="200" >备注</th>
+                        <th data-field="createTime" data-halign="center" data-sortable="true" data-align="center" data-width="160" >创建时间</th>
+                        <th data-field="do" data-halign="center" data-align="center" data-width="160">操作</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{include file="public/js" /}
+<script>
+    $(function () {
+        //自定页
+        // layer.open({
+        //     title:'', // ['消息', 'font-size:18px;'],
+        //     type: 2, // 基本层类型  0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+        //     skin: 'layui-layer-demo', //样式类名
+        //     shade: [0.8, '#393D49'], // 遮罩
+        //     closeBtn: 2, // 关闭按钮，可通过配置1和2来展示，如果不显示，则closeBtn: 0
+        //     anim: 3, // 弹出动画 0--平滑放大。默认 1--从上掉落 2--从最底部往上滑入 3--从左滑入 4--从左翻滚 5--渐显  6--抖动
+        //     area: ['420px', '360px'], // 宽高
+        //     content: 'form',
+        //     btnAlign: 'c',
+        //     btn: ['确定', '取消'],  //可以无限个按钮
+        //     yes: function(index, layero){
+        //         console.log(  layero  )
+        //     },
+        //     cancel: function (index,layero) {
+        //     },
+        // });
+
+        <!-- table初始化 -->
+        initBootstrapTable(id = 'table', url = 'lst');
+
+        // 时间筛选
+        searchByTime('stime', 'etime', true);
+
+        <!-- 新增页面 -->
+        addLayer("{:url('add')}", false, 'add');
+
+        <!-- 编辑页面 -->
+        $('#table').on('click', '.edit', function (event) {
+            event.preventDefault();
+            var id = $(this).data().id;
+            var url = "{:url('edit')}" + "?id=" + id;
+            addLayer(url, true);
+        })
+        .on('click','.admin',function () {
+            event.preventDefault();
+            var id = $(this).data().id;
+            var url = "{:url('adminList')}" + "?id=" + id;
+            addLayer(url, true);
+        });
+    });
+
+    function queryParams(params = {}) {
+        //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+        var temp = {
+            limit: params.limit,     // 页面大小
+            offset: params.offset,  // 每页显示数据的开始行号
+            sort: params.sort,       // 排序列名
+            order: params.order,    // 排位命令（desc，asc
+            departmentName: $('#departmentName').val(),    // 排位命令（desc，asc
+            stime: $('#stime').val(),
+            etime: $('#etime').val()
+        };
+        return temp;
+    };
+</script>
+</body>
+</html>
+
+

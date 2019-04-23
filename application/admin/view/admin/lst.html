@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+</head>
+<body class="gray-bg">
+<!-- 页面上涉及到需要权限判断的数据统一存放在body下起始位置 -->
+<!-- 而对应需要权限的操作模块，通过「authorize-xxxx」类名做标记 -->
+<!-- 最终通过js进行统一隐藏/显示，或销毁DOM -->
+<input type="hidden" id="authorize-edit" value="1">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h3>
+                员工管理
+                <button class="btn btn-xs btn-outline pull-right " data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" id="filter"><span>展开筛选</span> <i class="fa fa-angle-down"></i></button>
+            </h3>
+        </div>
+        <div class="ibox-content">
+
+            <div class="panel-group" id="accordion" style="margin-top: 15px;">
+                <div id="collapseTwo" class="panel-collapse collapse">
+                    <div class="form-inline text-center">
+                        <select class="form-control" name="departmentId" id="departmentId">
+                            <option value="">请选择部门</option>
+                            {foreach $department as $key=>$vo }
+                            <option value="{$vo.id}">{$vo.departmentName}</option>
+                            {/foreach}
+                        </select>
+                        <input type="text" class="form-control text-center" name="realname" id="realname" value=""
+                               placeholder="请输入姓名">
+                        <input type="text" class="form-control text-center" name="username" id="username" value=""
+                               placeholder="请输入昵称">
+                        <input type="text" class="form-control text-center" name="qq" id="qq" value=""
+                               placeholder="请输入QQ">
+                        <input type="text" class="form-control text-center" name="stime" id="stime" value=""
+                               placeholder="选择开始时间">
+                        <input type="text" class="form-control text-center" name="etime" id="etime" value=""
+                               placeholder="选择结束时间">
+                        <a href="javascript:;" id="search" class="btn btn-sm btn-primary "><i class="fa fa-search"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="toolbar" class="btn-group">
+                {if check_authority( $Think.session.adminId ,'admin/admin/add') }
+                <button type="button" id="add" class="btn btn-sm btn-primary authorize-edit">
+                    <i class="glyphicon glyphicon-plus"></i> 新增
+                </button>
+                {/if}
+            </div>
+
+            <div class="row row-lg" style="margin-top: 10px;" id="dataBody"></div>
+        </div>
+    </div>
+</div>
+{include file="public/js" /}
+
+
+<script>
+    // 初始化加载数据
+    initialize();
+
+    // 搜索
+    $('#search').on('click', function () {
+        initialize();
+    });
+
+    //  新增
+    addLayer("{:url('add')}", false, 'add');
+
+    $('#dataBody').on('click', '.edit', function (event) { // 编辑
+        event.preventDefault();
+        var id = $(this).data().id;
+        var url = "{:url('edit')}" + "?id=" + id;
+        addLayer(url, true);
+    });
+
+    // 初始化函数
+    function initialize() {
+        var url = "{:url('lst')}";
+        var data = {
+            'realname': $('#realname').val(),
+            'username': $('#username').val(),
+            'departmentId' : $('#departmentId').val(),
+            'qq': $('#qq').val(),
+            'stime': $('#stime').val(),
+            'etime': $('#etime').val(),
+        };
+        $.post(url, data, function (result, status, xhr) {
+            if (result['status'] == 1) {
+                if (result['data'].length != 0) {
+                    $('#dataBody').empty();
+                    $.each(result['data'], function (i, val) {
+                        var str = '<div class="col-sm-6 col-md-4">'
+                            + '<div class="contact-box" style="background:#fafafa">'
+                            + '<div class="row">'
+                            + '<div class="col-sm-4">'
+                            + '<div class="text-center">'
+                            + '<img alt="image" class="img-circle m-t-xs img-responsive" src="' + val['headimg'] + '" width="120px"height="120px">'
+                            // + '<div class="m-t-xs font-bold"><span style="color: red;">冻结</span></div>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '<div class="col-sm-8">'
+                            + '<div class="btn-group pull-left">'
+                            + '<button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle"aria-expanded="false">操作 <span class="caret"></span></button>'
+                            + '<ul class="dropdown-menu pull-right">'
+                            + '<li><a href="javascript:;" class="edit" data-id="' + val['id'] + '"><i class="fa fa-fw fa-edit"></i> 编辑</a></li>'
+                            // + '<li role="presentation" access-control="usr.edit" access-control-do="remove"class="divider"></li>'
+                            // + '<li><a href="javascript:;" class="remove" data-id="' + val['id'] + '"><i class="fa fa-fw fa-trash"></i> 删除</a></li>'
+                            // + '<li role="presentation" access-control="usr.lock" access-control-do="lock" class="divider"></li>'
+                            // + '<li><a href="javascript:;" class="lock" data-id="' + val['id'] + '"><i class="fa fa-fw fa-unlock"></i> 冻结</a></li>'
+                            + '</ul>'
+                            + '</div>'
+
+                            + '<address class="m-t" style="line-height:26px;padding-top:10px; ">'
+                            + '<i class="fa fa-user"></i> <strong>  ' + val['username'] + '</strong><br>'
+                            + '<i class="fa fa-group"></i> ' + val['departmentName'] + '<br>'
+                            + '<i class="fa fa-phone"></i> ' + val['mobile'] + '<br>'
+                            + '<i class="fa fa-qq"></i> ' + val['qq'] + '<br>'
+                            + '</address>'
+                            + '</div>'
+
+                            + '<div class="row">'
+                            + '<div class="col-sm-12">'
+                            + '<div class="pull-right">'
+                            + '<small><abbr title="最近一次登录时间"><i class="fa fa-clock-o"></i></abbr> ' + val['last_login_time'] + '</small>'
+                            + '</div>'
+                            + '</div>'
+                            + '</div>'
+
+                            + '</div>'
+                            + '</div>';
+                        +'</div>';
+                        $('#dataBody').append(str);
+                    });
+                } else {
+                    var str = '<div class="col-sm-6 col-sm-offset-3" id="nonData">'
+                        + '<div class="jumbotron text-center text-danger">'
+                        + '<h2><i class="fa fa-warning"></i> 没有搜索到任何员工</h2>'
+                        + '</div>'
+                        + '</div>';
+                    $('#dataBody').empty().append(str);
+                }
+            } else {
+                swal('请求数据失败', '', 'error');
+            }
+        }, 'json')
+    }
+
+    // 关闭页面
+    function closeLayer(index) {
+        layer.close(index);
+    }
+
+</script>
+</body>
+</html>

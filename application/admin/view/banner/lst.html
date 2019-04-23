@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+    <style>
+        body .demo-class .layui-layer-title{background:#c00; color:#fff; border: none;}
+        body .demo-class .layui-layer-btn{border-top:1px solid #E9E7E7}
+        body .demo-class .layui-layer-btn a{background:#333;}
+        body .demo-class .layui-layer-btn .layui-layer-btn1{background:#999;}
+    </style>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox-title">
+        <h3>
+            banner管理
+            <button class="btn btn-xs btn-outline pull-right " data-toggle="collapse" data-parent="#accordion"
+                    href="#collapseTwo"><span>点击筛选</span> <i class="fa fa-angle-down"></i></button>
+        </h3>
+    </div>
+    <div class="ibox-content">
+
+        <div class="panel-group" id="accordion" style="margin-top: 15px;margin-bottom: -5px;">
+            <div id="collapseTwo" class="panel-collapse collapse">
+                <div class="form-inline text-center">
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">部门名称：</span>
+                            <input type="text" class="form-control text-center" name="title" id="title" value="" placeholder="请输入名称">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">Bnaner分类：</span>
+                            <select class="form-control" name="bannerCategoryId" id="bannerCategoryId">
+                                <option value="">请选择Bnaner分类</option>
+                                {foreach $bannerCategory as $key => $value}
+                                <option value="{$value['id']}">{$value['categoryName']}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">开始时间：</span>
+                            <input type="text" class="form-control text-center" name="stime" id="stime" value=""
+                                   placeholder="选择开始时间">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">结束时间：</span>
+                            <input type="text" class="form-control text-center" name="etime" id="etime" value=""
+                                   placeholder="选择结束时间">
+                        </div>
+                        <a href="javascript:;" id="search" class="btn btn-primary ">搜索</a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row row-lg">
+            <div class="col-sm-12">
+                <div id="toolbar" class="btn-group">
+                    {if check_authority( $Think.session.adminId ,'admin/banner/add') }
+                        <button type="button" id="add" class="btn btn-sm btn-primary authorize-edit">
+                            <i class="glyphicon glyphicon-plus"></i> 新增
+                        </button>
+                    {/if}
+                </div>
+
+                <table id="table" data-search="true">
+                    <thead>
+                    <tr>
+                        <th data-field="image" data-halign="center" data-align="center" >图片</th>
+                        <th data-field="title" data-halign="center" data-align="center" data-width="240" >名称</th>
+                        <th data-field="urlAddress" data-halign="center" data-align="left">URL地址</th>
+                        <th data-field="categoryName" data-halign="center" data-align="center">分类</th>
+                        <th data-field="type" data-halign="center" data-align="center">类型</th>
+                        <th data-field="orderNo" data-halign="center" data-align="center" data-sortable="true" >排序值</th>
+                        <th data-field="createTime" data-halign="center" data-sortable="true" data-align="center">创建时间</th>
+                        <th data-field="do" data-halign="center" data-align="center" data-width="150">操作</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{include file="public/js" /}
+<script>
+    $(function () {
+
+        <!-- table初始化 -->
+        initBootstrapTable(id = 'table', url = 'lst');
+
+        // 时间筛选
+        searchByTime('stime', 'etime', true);
+
+        <!-- 新增页面 -->
+        addLayer("{:url('add')}", false, 'add');
+
+        <!-- 编辑页面 -->
+        $('#table').on('click', '.edit', function (event) {
+            event.preventDefault();
+            var id = $(this).data().id;
+            var url = "{:url('edit')}" + "?id=" + id;
+            addLayer(url, true);
+        })
+        .on('click', '.delete', function (event) { // 删除权限
+            event.preventDefault();
+            var id = $(this).data().id;
+            var url = "{:url('delete')}";
+            deleteRecord(url, {'id':id});
+        });
+    });
+
+    function queryParams(params = {}) {
+        //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+        var temp = {
+            limit: params.limit,     // 页面大小
+            offset: params.offset,  // 每页显示数据的开始行号
+            sort: params.sort,       // 排序列名
+            order: params.order,    // 排位命令（desc，asc
+            title: $('#title').val(),    // 排位命令（desc，asc
+            'bannerCategoryId': $('#bannerCategoryId').val(),
+            stime: $('#stime').val(),
+            etime: $('#etime').val()
+        };
+        return temp;
+    };
+</script>
+</body>
+</html>
+
+

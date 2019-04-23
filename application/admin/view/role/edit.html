@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+</head>
+<body class="gray-bg">
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h3>
+                <button type="button" class="btn btn-white btn-sm closelayer">返回</button>
+                角色编辑
+            </h3>
+        </div>
+        <div class="ibox-content">
+            <div class="row row-lg">
+                <div class="col-sm-12">
+                    <form class="form-horizontal" id="editForm" action="{:url('edit')}" method="post" style="margin-top: 20px" >
+                        <input type="hidden" name="id" value="{$data['id']}">
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">角色名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="roleName" id="roleName" placeholder="请输入角色名称" class="form-control" value="{$data['roleName']}" dataType="*2-18" nullmsg="请输入角色名称">
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">状态</label>
+                            <div class="col-sm-4">
+                                {foreach $roleStatus as $key=>$vo }
+                                    <label class="radio-inline i-checks"><input type="radio" name="status" datatype="*"  value="{$key}" {if $data['status'] == $key}checked{/if}>{$vo}</label>
+                                {/foreach}
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">排序值</label>
+                            <div class="col-sm-4">
+                                <input type="number" name="orderNo" id="orderNo" onblur="this.value > 9999 ? this.value = 9999 : this.value;" placeholder="请输入排序值" class="form-control" value="{$data['orderNo']}" min="0" max="9999" dataType="n" nullmsg="请输入排序值" errormsg="排序值只能为大于等于0且小于9999的正整数">
+                                <em class="text-warning"><i class="fa fa-info-circle"></i> 默认值为1000，最大值为9999，最小值0，数值越大越排前</em>
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-4">
+                                <textarea id="remark" name="remark" placeholder="请输入备注" class="form-control" style="height:150px"  nullmsg="请输入备注" >{$data['remark']}</textarea>
+                            </div>
+                            <label class="help-inline m-b-none" ></label>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-primary" type="submit" id="btn-submit">保 存</button>
+                                <button class="btn btn-black closelayer" type="button">取 消</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{include file="public/js" /}
+<!-- validform -->
+<script src="__STATIC__/validform/Validform_v5.3.2.js"></script>
+
+<script type="text/javascript">
+    $(function() {
+        // iCheck初始化
+        initIcheck();
+
+        // 提交表单
+        subnitForm('editForm', false, 'help-inline');
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$systemSetting['title']}</title>
+    <meta name="keywords" content="{$systemSetting['keywords']}">
+    <meta name="description" content="{$systemSetting['description']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    {include file="public/css" /}
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox-title">
+        <h3>
+            <button type="button" class="btn btn-white btn-sm closelayer">返回</button>
+            日志列表
+            <button class="btn btn-xs btn-outline pull-right " data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><span>点击筛选</span> <i class="fa fa-angle-down"></i></button>
+        </h3>
+    </div>
+    <div class="ibox-content">
+
+        <div class="panel-group" id="accordion" style="margin-top: 15px;margin-bottom: -5px;">
+            <div id="collapseTwo" class="panel-collapse collapse">
+                <div class="form-inline text-center">
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">帐号：</span>
+                            <input type="text" class="form-control text-center" name="username" id="username" value=""
+                                   placeholder="请输入帐号">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">开始时间：</span>
+                            <input type="text" class="form-control text-center" name="stime" id="stime" value=""
+                                   placeholder="选择开始时间">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">结束时间：</span>
+                            <input type="text" class="form-control text-center" name="etime" id="etime" value=""
+                                   placeholder="选择结束时间">
+                        </div>
+                        <a href="javascript:;" id="search" class="btn btn-primary ">搜索</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-lg">
+            <div class="col-sm-12">
+                <table id="table" data-search="true">
+                    <thead>
+                    <tr>
+                        <th data-field="headimg" data-halign="center" data-align="center">头像</th>
+                        <th data-field="username" data-halign="center" data-align="center">帐号</th>
+                        <th data-field="realname" data-halign="center" data-align="center">真实姓名</th>
+                        <th data-field="mobile" data-halign="center" data-align="center">手机</th>
+                        <th data-field="landline" data-halign="center" data-align="center">座机</th>
+                        <th data-field="qq" data-halign="center" data-align="center">QQ</th>
+                        <th data-field="department" data-halign="center" data-align="center">部门</th>
+                        <th data-field="status" data-halign="center" data-align="center">状态</th>
+                        <th data-field="remark" data-halign="center" data-align="center">备注</th>
+                        <th data-field="createTime" data-halign="center" data-align="center" data-sortable="true">创建时间</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{include file="public/js" /}
+<script>
+    $(function () {
+        <!-- table 初始化 -->
+        initBootstrapTable(id='table',url="{:url('adminList')}?id={$id}");
+
+        // 时间筛选
+        $('#stime, #etime').datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd hh:ii',
+            weekStart: 1, //一周从哪一天开始。0（星期日）到6（星期六）
+            startView: 2, // 日期时间选择器打开之后首先显示的视图  默认值：2, 'month'
+            minView: 0, // 日期时间选择器所能够提供的最精确的时间选择视图  默认值：0, 'hour'
+            todayHighlight: true,
+            todayBtn: true,
+            autoclose: true
+        });
+        $('#stime').on('changeDate', function (event) {
+            $('#etime').datetimepicker('setStartDate', event.date);
+        });
+        $('#etime').on('changeDate', function (event) {
+            $('#stime').datetimepicker('setEndDate', event.date);
+        });
+    });
+
+    function queryParams(params = {}) {
+        //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+        var temp = {
+            limit: params.limit,     // 页面大小
+            offset: params.offset,  // 每页显示数据的开始行号
+            sort: params.sort,       // 排序列名
+            order: params.order,    // 排位命令（desc，asc
+            stime: $('#stime').val(),
+            etime: $('#etime').val(),
+            username:$('#username').val(),
+        };
+        return temp;
+    };
+</script>
+</body>
+</html>
+
+
